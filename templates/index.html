@@ -10,9 +10,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
+<script type="text/javascript">
+  const nodSource = "static/img/nodding.gif";
+  const waitSource = "static/img/waiting.gif";
+  let nowSource = nodSource
+  const check = () => {
+    const request = new XMLHttpRequest();
+
+    request.open('GET', 'http://localhost:5000/audio', true);
+    request.responseType = 'json';
+
+    request.onload = function () {
+      const data = this.response;
+      const img = document.getElementById('gif');
+      if (data.is_talking && nowSource !== nodSource) {
+        img.setAttribute('src', nodSource);
+        nowSource = nodSource
+      } else if (!data.is_talking && nowSource !== waitSource) {
+        img.setAttribute('src', waitSource);
+        nowSource = waitSource
+      }
+      console.log(data, nowSource);
+    };
+
+    request.send();
+  }
+  setInterval(check, 200);
+</script>
+
 <body>
   <div class="text-center">
-    <img src="static/img/unazuki.gif" class="figure-img img-fluid rounded" alt="...">
+    <img id="gif" src="static/img/nodding.gif" class="figure-img img-fluid rounded" alt="...">
   </div>
 </body>
 

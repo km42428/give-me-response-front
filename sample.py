@@ -1,40 +1,44 @@
+# -*- coding:utf-8 -*-
+
 import pyaudio
-import wave
- 
-FILE_PATH = "filename.wav"
+import numpy as np
+
 CHUNK = 1024
- 
-wf = wave.open(FILE_PATH, 'rb')
- 
-print("==================")
-# instantiate PyAudio (1)
+RATE = 44100
 p = pyaudio.PyAudio()
-# open stream (2)
 
-device_count = p.get_device_count()
-for i in range(0, device_count):
-    print("Name: " + p.get_device_info_by_index(i)["name"])
-    print("Index: " + p.get_device_info_by_index(i)["index"])
-    print("\n")
+stream = p.open(format=pyaudio.paInt16,
+                channels=1,
+                rate=RATE,
+                frames_per_buffer=CHUNK,
+                input=True,
+                output=True)  # inputとoutputを同時にTrueにする
 
-stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                channels=wf.getnchannels(),
-                rate=wf.getframerate(),
-                output=True)
- 
-print("p.get_default_input_device_info()")
-print(p.get_default_input_device_info())
-# read data
-data = wf.readframes(CHUNK)
- 
-# play stream (3)
-while len(data) > 0:
-    stream.write(data)
-    data = wf.readframes(CHUNK)
- 
-# stop stream (4)
+all = []
+def is_talking(array):
+  return any(list(array))
+
+# tmpは常に同じ長さ
+tmp = [False for k in range(0, 20)]
+while stream.is_active():
+    input = stream.read(CHUNK)
+    npData = np.frombuffer(input, dtype="int16") / 32768.0
+
+		# 声の大きさが閾値を超えると話している判定にする
+    threshold = 0.1
+    isThresholdOver = False
+    if max(npData) > threshold:
+        isThresholdOver = True
+    
+    tmp.append(isThresholdOver)
+    tmp.pop(0)
+    if (is_talking(tmp)):
+      print("お話し中...")
+    else:
+      print("おしゃべりしましょ")
+
 stream.stop_stream()
 stream.close()
- 
-# close PyAudio (5)
 p.terminate()
+
+print("Stop Streaming")
