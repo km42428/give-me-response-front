@@ -10,10 +10,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
+<!-- 一定時間毎に発音状態を確認する -->
 <script type="text/javascript">
-  const nodSource = "static/img/nodding.gif";
-  const waitSource = "static/img/waiting.gif";
-  let nowSource = nodSource
+  const noddingSrc = "static/img/nodding.gif";
+  const waitingSrc = "static/img/waiting.gif";
+  let nowSrc = noddingSrc;
   const check = () => {
     const request = new XMLHttpRequest();
 
@@ -23,16 +24,14 @@
     request.onload = function () {
       const data = this.response;
       const img = document.getElementById('gif');
-      if (data.is_talking && nowSource !== nodSource) {
-        img.setAttribute('src', nodSource);
-        nowSource = nodSource
-      } else if (!data.is_talking && nowSource !== waitSource) {
-        img.setAttribute('src', waitSource);
-        nowSource = waitSource
+      if (data.is_talking && nowSrc !== noddingSrc) {
+        img.setAttribute('src', noddingSrc);
+        nowSrc = noddingSrc
+      } else if (!data.is_talking && nowSrc !== waitingSrc) {
+        img.setAttribute('src', waitingSrc);
+        nowSrc = waitingSrc
       }
-      console.log(data, nowSource);
     };
-
     request.send();
   }
   setInterval(check, 200);
