@@ -10,9 +10,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
+<!-- 一定時間毎に発音状態を確認する -->
+<script type="text/javascript">
+  const noddingSrc = "static/img/nodding.gif";
+  const waitingSrc = "static/img/waiting.gif";
+  let nowSrc = noddingSrc;
+  const check = () => {
+    const request = new XMLHttpRequest();
+
+    request.open('GET', 'http://localhost:5000/audio', true);
+    request.responseType = 'json';
+
+    request.onload = function () {
+      const data = this.response;
+      const img = document.getElementById('gif');
+      if (data.is_talking && nowSrc !== noddingSrc) {
+        img.setAttribute('src', noddingSrc);
+        nowSrc = noddingSrc
+      } else if (!data.is_talking && nowSrc !== waitingSrc) {
+        img.setAttribute('src', waitingSrc);
+        nowSrc = waitingSrc
+      }
+    };
+    request.send();
+  }
+  setInterval(check, 200);
+</script>
+
 <body>
   <div class="text-center">
-    <img src="static/img/unazuki.gif" class="figure-img img-fluid rounded" alt="...">
+    <img id="gif" src="static/img/nodding.gif" class="figure-img img-fluid rounded" alt="...">
   </div>
 </body>
 
