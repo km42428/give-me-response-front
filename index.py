@@ -20,9 +20,9 @@ stream = p.open(format=pyaudio.paInt16,
                 output=True)  # inputとoutputを同時にTrueにする
 tmp = [False for k in range(0, 100)]
 
+# 発音中か判定する
 def is_talking(array):
     return any(list(array))
-
 
 # 音声取得
 def audio():
@@ -37,14 +37,17 @@ def audio():
         tmp.append(isThresholdOver)
         tmp.pop(0)
 
+# バックグラウンドで音声取得処理
 scheduler = BackgroundScheduler()  # スケジューラを作る
 scheduler.add_job(audio, 'interval', seconds=3)  # ジョブを追加
 scheduler.start()  # スタート
 
+# トップページ
 @app.route('/')
 def hello_world():
-    return render_template("index.html", is_talking=True)
+    return render_template("index.html")
 
+# 発音状態を確認する
 @app.route('/audio')
 def get_audio():
     return dict(is_talking=is_talking(tmp))
