@@ -17,10 +17,8 @@
   let nowSrc = noddingSrc;
   const check = () => {
     const request = new XMLHttpRequest();
-
     request.open('GET', 'http://localhost:5000/audio', true);
     request.responseType = 'json';
-
     request.onload = function () {
       const data = this.response;
       const img = document.getElementById('gif');
