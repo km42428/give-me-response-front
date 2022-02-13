@@ -9,3 +9,6 @@ https://zenn.dev/km42/articles/22dda4ca01637a
 ```
 $ sh start.sh
 ```
+
+# version
+v1.0.0
